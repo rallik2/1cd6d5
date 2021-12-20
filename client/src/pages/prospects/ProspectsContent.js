@@ -14,8 +14,10 @@ const Content = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  Checkbox
 }) => {
   const rowData = paginatedData.map((row) => [
+    <Checkbox type={"body"}/>,
     row.email,
     row.first_name,
     row.last_name,
@@ -38,6 +40,7 @@ const Content = ({
           page={page}
           rowsPerPage={rowsPerPage}
           headerColumns={[
+            <Checkbox type={"header"}/>,
             "Email",
             "First Name",
             "Last Name",

@@ -9,6 +9,10 @@ export const useTableStyles = makeStyles((theme) => ({
     "& td": {
       borderBottom: `1px solid ${theme.palette.grey[200]}`,
     },
+    "& .MuiCheckbox-root": {
+      width: "100%",
+      padding: "3px 0",
+    }
   },
   tableHead: {
     backgroundColor: theme.palette.primary.main,

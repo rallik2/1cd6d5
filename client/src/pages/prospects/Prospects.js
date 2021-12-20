@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import withAuth from "common/withAuth";
 import Drawer from "common/Drawer";
+import TableCheckbox from "common/TableCheckbox";
 import ProspectsContent from "./ProspectsContent";
 import axios from "axios";
 import { DEFAULT_NUM_ROWS_PER_PAGE } from "../../constants/table";
@@ -30,6 +31,7 @@ const Prospects = () => {
           `/api/prospects?page=${currentPage}&page_size=${rowsPerPage}`,
         );
         if (resp.data.error) throw new Error(resp.data.error);
+        console.log(resp.data);
         setProspectsData(resp.data.prospects);
         setCount(resp.data.total);
       } catch (error) {
@@ -53,6 +55,7 @@ const Prospects = () => {
             rowsPerPage={rowsPerPage}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
+            Checkbox={TableCheckbox}
           />
         }
       />
