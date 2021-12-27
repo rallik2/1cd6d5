@@ -14,10 +14,20 @@ const Content = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
-  Checkbox
+  selectedProspects,
+  selectedProspectsCount,
+  isFullPageSelected,
+  handleChangeSelectedProspects,
+  handleCheckFullPageProspects,
+  TableCheckbox
 }) => {
+  // console.log(paginatedData)
   const rowData = paginatedData.map((row) => [
-    <Checkbox type={"body"}/>,
+    <TableCheckbox
+      prospect={row.id}
+      isChecked={selectedProspects[row.id]}
+      handleChangeSelectedProspects={handleChangeSelectedProspects}
+    />,
     row.email,
     row.first_name,
     row.last_name,
@@ -34,13 +44,19 @@ const Content = ({
       ) : (
         <PaginatedTable
           paginatedData={paginatedData}
+          selectedProspects={selectedProspects}
+          selectedProspectsCount={selectedProspectsCount}  
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
           count={count}
           page={page}
           rowsPerPage={rowsPerPage}
           headerColumns={[
-            <Checkbox type={"header"}/>,
+            <TableCheckbox
+              prospect={"header"}
+              isChecked={isFullPageSelected}
+              handleChangeSelectedProspects={handleCheckFullPageProspects}
+            />,
             "Email",
             "First Name",
             "Last Name",

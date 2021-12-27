@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { memo } from 'react'
 import Checkbox from '@material-ui/core/Checkbox';
 import { withStyles } from "@material-ui/core";
 
 
-export default function TableCheckbox({ isChecked, handleChange, type }) {
+function TableCheckbox({ prospect, isChecked, handleChangeSelectedProspects }) {
 
     const HeaderCheckbox = withStyles((theme) => ({
         root: {
@@ -15,11 +15,14 @@ export default function TableCheckbox({ isChecked, handleChange, type }) {
         checked: {},
     }))((props) => <Checkbox {...props} />);
     
-    if (type === "header") {
-        return <HeaderCheckbox disableRipple checked={isChecked} onChange={handleChange}/>
+    if (prospect === "header") {
+        return <HeaderCheckbox value={prospect} disableRipple checked={isChecked} onChange={handleChangeSelectedProspects}/>
     } else {
         return (
-            <Checkbox disableRipple color="primary" checked={isChecked} onChange={handleChange}/>
+            <Checkbox value={prospect} disableRipple color="primary" checked={isChecked} onChange={handleChangeSelectedProspects}/>
         )
     }
 }
+
+export default memo(TableCheckbox);
+// export default TableCheckbox;
