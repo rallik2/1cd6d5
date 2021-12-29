@@ -27,9 +27,21 @@ export const useTableStyles = makeStyles((theme) => ({
       borderRadius: "0  5px 5px 0",
     },
   },
+  countModalWrapper: {
+    width: "max-content",
+    marginLeft: theme.spacing(2.5),
+    gap: theme.spacing(2.5),
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  selectedCountTracker: {
+    fontWeight: "bold"
+  },
   paginationRoot: {
     flexShrink: 0,
     marginLeft: theme.spacing(2.5),
+    marginRight: theme.spacing(2.5),
     border: "1px solid",
     borderColor: theme.palette.text.disabled,
     borderRadius: 3 + "rem",

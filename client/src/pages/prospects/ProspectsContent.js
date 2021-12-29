@@ -43,27 +43,28 @@ const Content = ({
         </Grid>
       ) : (
         <PaginatedTable
-          paginatedData={paginatedData}
-          selectedProspects={selectedProspects}
-          selectedProspectsCount={selectedProspectsCount}  
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-          count={count}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          headerColumns={[
-            <TableCheckbox
-              prospect={"header"}
-              isChecked={isFullPageSelected}
-              handleChangeSelectedProspects={handleCheckFullPageProspects}
-            />,
-            "Email",
-            "First Name",
-            "Last Name",
-            "Created",
-            "Updated",
-          ]}
-          rowData={rowData}
+            paginatedData={paginatedData}
+            selectedProspects={selectedProspects}
+            selectedProspectsCount={selectedProspectsCount}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            count={count}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            headerColumns={[
+              <TableCheckbox
+                prospect={"header"}
+                isChecked={isFullPageSelected}
+                handleChangeSelectedProspects={handleCheckFullPageProspects}
+              />,
+              "Email",
+              "First Name",
+              "Last Name",
+              "Created",
+              "Updated",
+            ]}
+            rowData={rowData}
+            renderProspectsCountModal={true}
         />
       )}
     </>

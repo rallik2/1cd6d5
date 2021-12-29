@@ -1,6 +1,5 @@
 import React, { memo } from 'react'
-import Checkbox from '@material-ui/core/Checkbox';
-import { withStyles } from "@material-ui/core";
+import { Checkbox, withStyles } from "@material-ui/core";
 
 
 function TableCheckbox({ prospect, isChecked, handleChangeSelectedProspects }) {
