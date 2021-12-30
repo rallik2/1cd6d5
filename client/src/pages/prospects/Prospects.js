@@ -30,9 +30,9 @@ const Prospects = () => {
       ...currentlySelected,
       [event.target.value]: event.target.checked
     }))
-    const countChange = event.target.checked ? 1 : -1;
+    const countChangeSingle = event.target.checked ? 1 : -1;
 
-    setSelectedProspectsCount((currentCount) => currentCount += countChange)
+    setSelectedProspectsCount((currentCount) => currentCount += countChangeSingle)
   };
 
   const handleCheckFullPageProspects = (event) => {
@@ -49,18 +49,18 @@ const Prospects = () => {
     }, { data: { ...currentSelectedProspects }, count })
     setIsFullPageSelected((currentlySelected) => !currentlySelected)
     setSelectedProspects(updatedProspectStateForPage.data)
-    const changeInCount = isChecked ? updatedProspectStateForPage.count : -updatedProspectStateForPage.count;
-    setSelectedProspectsCount((currentCount) => currentCount += changeInCount);
+    const countChangeFullPage = isChecked ? updatedProspectStateForPage.count : -updatedProspectStateForPage.count;
+    setSelectedProspectsCount((currentCount) => currentCount += countChangeFullPage);
   }
 
   useEffect(() => {
-    const initializeSelectedProsepectsState = (prospectsData, oldData) => {
-      return prospectsData.reduce((selPros, pros) => {
-        if (!selPros[pros.id]) {
-          selPros[pros.id] = false;
+    const initializeSelectedProsepectsState = (prospectsDataNewPage, currentProspectsData) => {
+      return prospectsDataNewPage.reduce((selProsObj, pros) => {
+        if (!selProsObj[pros.id]) {
+          selProsObj[pros.id] = false;
         }
-        return selPros;
-      }, { ...oldData } );
+        return selProsObj;
+      }, { ...currentProspectsData } );
     }
     
     const fetchProspects = async () => {

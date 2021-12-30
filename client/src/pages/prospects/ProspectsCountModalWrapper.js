@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularP
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 
-const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }) => {
+const ProspectsCountModalWrapper = ({count, selectedProspects, selectedProspectsCount }) => {
     const { countModalWrapper, selectedCountTracker } = useTableStyles();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [campaignsAreLoading, setCampaignsAreLoading] = useState(false);
@@ -93,7 +93,7 @@ const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }
             </Button>
             <Dialog open={dialogOpen} onClose={handleDialogClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">
-                    {`Select a Campain to Add ${selectedProspectsCount} Prospects`}
+                    {`Select a Campaign to Add ${selectedProspectsCount} Prospects`}
                 </DialogTitle>
                 <DialogContent>
                     <Autocomplete
@@ -139,4 +139,4 @@ const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }
     )
 }
 
-export default ProspectsToCampaign;
+export default ProspectsCountModalWrapper;

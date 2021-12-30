@@ -13,7 +13,7 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 
 import { Grid, TableCell, Typography } from "@material-ui/core";
-import ProspectsToCampaign from "./../pages/prospects/ProspectsToCampaign";
+import ProspectsCountModalWrapper from "../pages/prospects/ProspectsCountModalWrapper";
 import { NUM_ROWS_PER_PAGE_CHOICES } from "../constants/table";
 import { useTableStyles } from "../styles/table";
 
@@ -114,7 +114,7 @@ export default function CustomPaginatedTable({
     <React.Fragment>
       <div className={renderProspectsCountModal ? flexRoot : flexRootEnd}>
         { renderProspectsCountModal ?
-          <ProspectsToCampaign
+          <ProspectsCountModalWrapper
           count={count}
           selectedProspects={selectedProspects}
           selectedProspectsCount={selectedProspectsCount}
