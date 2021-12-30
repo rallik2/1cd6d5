@@ -24,4 +24,3 @@ function TableCheckbox({ prospect, isChecked, handleChangeSelectedProspects }) {
 }
 
 export default memo(TableCheckbox);
-// export default TableCheckbox;

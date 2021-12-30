@@ -8,29 +8,25 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }) => {
     const { countModalWrapper, selectedCountTracker } = useTableStyles();
     const [dialogOpen, setDialogOpen] = useState(false);
-    // const [autocompleteOpen, setAutocompleteOpen] = useState(false);
     const [campaignsAreLoading, setCampaignsAreLoading] = useState(false);
-    // const [query, setQuery] = useState(null)
     const [campaignsSearchData, setCampaignsSearchData] = useState([])
     const [selectedCampaign, setSelectedCampaign] = useState(null)
-    
-    // console.log(selectedCampaign)
-    // console.log(user_id)
-    // console.log(campaignsSearchData, count)
+    const [selectedProspectIds, setSelectedProspectIds] = useState([]);
 
     const getSelectedProspectsIds = () => {
         const currentSelectedProspects = selectedProspects;
         const selectedProspectsToAdd = [];
         const selectedProspectsRawArray = Object.entries(currentSelectedProspects)
-        selectedProspectsRawArray.forEach((prospect) => {
-            if (prospect[1] === true) {
-                selectedProspectsToAdd.push(prospect[0])
+        selectedProspectsRawArray.forEach(([prospect, isSelected]) => {
+            if (isSelected) {
+                selectedProspectsToAdd.push(parseInt(prospect))
             };
         })
-        return selectedProspectsToAdd;
-    }
+        setSelectedProspectIds(selectedProspectsToAdd);
+    };
  
     const handleDialogOpen = () => {
+        getSelectedProspectsIds()
         setDialogOpen(true)
     }
     const handleDialogClose = () => {
@@ -39,41 +35,53 @@ const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }
         setDialogOpen(false)
     }
     const handleConfirmAddToCampaign = async () => {
-        const prospect_ids = getSelectedProspectsIds()
+        if (selectedProspectIds.length < 1) {
+            alert("Please select prospects before adding to a campaign");
+            handleDialogClose();
+            return;
+        }
+        if (!selectedCampaign) {
+            alert("Please select a campaign");
+            return;
+        }
+        const prospect_ids = selectedProspectIds;
+        const count_prospects_to_add = prospect_ids.length;
         const { id } = selectedCampaign;
-        console.log(prospect_ids)
         if (prospect_ids && prospect_ids.length > 0 && id !== null) {
             try {
                 const resp = await axios.post(
                     `/api/campaigns/${id}/prospects`,
-                    { prospect_ids }
+                    { id, prospect_ids }
                 );
-                console.log(resp)
+                const count_prospects_added = resp.data.prospect_ids.length;
+                if (count_prospects_added < count_prospects_to_add) {
+                    const difference_added = count_prospects_to_add - count_prospects_added;
+                    alert(`${difference_added} of ${count_prospects_to_add} prospects already in campaign`)
+                }
             } catch (error) {
                 console.error(error);
-            } 
+            }
         }
         handleDialogClose();
     }
 
-        const handleSearchCampaigns = async (query) => {
-            if (query === null || query === "") {
-                return;
-            };
-            setCampaignsAreLoading(true);
-            try {
-                const resp = await axios.get(
-                    `/api/campaigns/search`,
-                    {params: {query}}
-                );
-                // console.log(resp.data)
-                setCampaignsSearchData(resp.data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setCampaignsAreLoading(false);
-            }
+    const handleSearchCampaigns = async (query) => {
+        if (query === null || query === "") {
+            return;
         };
+        setCampaignsAreLoading(true);
+        try {
+            const resp = await axios.get(
+                `/api/campaigns/search`,
+                {params: {query}}
+            );
+            setCampaignsSearchData(resp.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setCampaignsAreLoading(false);
+        }
+    };
 
     return (
         <div className={countModalWrapper}>
@@ -90,21 +98,16 @@ const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }
                 <DialogContent>
                     <Autocomplete
                         id="campaigns-autocomplete"
-                        openOnFocus
-                        // open={autocompleteOpen}
-                        // onOpen={() => setAutocompleteOpen(true)}
-                        // onClose={() => setAutocompleteOpen(false)}
                         getOptionSelected={(option, value) => option.name === value.name}
                         getOptionLabel={(option) => option.name}
                         options={campaignsSearchData}
                         loading={campaignsAreLoading}
                         onInputChange={(event, newInput) => {
-                            if (newInput !== null || newInput !== "") {
+                            if (event.type === "change" && ( newInput !== null || newInput !== "")) {
                                 handleSearchCampaigns(newInput);
                             }
                         }}
                         onChange={(event, newValue) => {
-                            // console.log(event)
                             setSelectedCampaign(newValue)
                         }}
                         renderInput={(params) => (
@@ -112,6 +115,7 @@ const ProspectsToCampaign = ({count, selectedProspects, selectedProspectsCount }
                                 {...params}
                                 label="Select a Campaign"
                                 variant="outlined"
+                                autoFocus
                                 InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (

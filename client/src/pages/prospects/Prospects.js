@@ -15,9 +15,6 @@ const Prospects = () => {
   const [isFullPageSelected, setIsFullPageSelected] = useState(null)
   const [selectedProspects, setSelectedProspects] = useState({});
   const [selectedProspectsCount, setSelectedProspectsCount] = useState(0);
-  // console.log(selectedProspects)
-  // console.log(Object.entries(selectedProspects))
-  // console.log(selectedProspectsCount)
 
   const handleChangeRowsPerPage = (event, _) => {
     setRowsPerPage(event.target.value);
@@ -29,13 +26,12 @@ const Prospects = () => {
   };
 
   const handleChangeSelectedProspects = (event) => {
-    // event.preventDefault()
-    console.log("checked", event.target.checked)
-    const countChange = event.target.checked ? 1 : -1;
-    setSelectedProspects((curretlySelected) => ({
-      ...curretlySelected,
+    setSelectedProspects((currentlySelected) => ({
+      ...currentlySelected,
       [event.target.value]: event.target.checked
     }))
+    const countChange = event.target.checked ? 1 : -1;
+
     setSelectedProspectsCount((currentCount) => currentCount += countChange)
   };
 
@@ -51,7 +47,6 @@ const Prospects = () => {
       }
       return fullPagePros;
     }, { data: { ...currentSelectedProspects }, count })
-    // console.log(updatedProspectStateForPage)
     setIsFullPageSelected((currentlySelected) => !currentlySelected)
     setSelectedProspects(updatedProspectStateForPage.data)
     const changeInCount = isChecked ? updatedProspectStateForPage.count : -updatedProspectStateForPage.count;
@@ -60,9 +55,7 @@ const Prospects = () => {
 
   useEffect(() => {
     const initializeSelectedProsepectsState = (prospectsData, oldData) => {
-      // console.log('old data', oldData);
       return prospectsData.reduce((selPros, pros) => {
-        // console.log('selPros', selPros)
         if (!selPros[pros.id]) {
           selPros[pros.id] = false;
         }
@@ -78,7 +71,6 @@ const Prospects = () => {
           `/api/prospects?page=${currentPage}&page_size=${rowsPerPage}`,
         );
         if (resp.data.error) throw new Error(resp.data.error);
-        console.log(resp.data);
         setProspectsData(resp.data.prospects);
         setCount(resp.data.total);
         setSelectedProspects((selected) =>

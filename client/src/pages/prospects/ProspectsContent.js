@@ -21,7 +21,6 @@ const Content = ({
   handleCheckFullPageProspects,
   TableCheckbox
 }) => {
-  // console.log(paginatedData)
   const rowData = paginatedData.map((row) => [
     <TableCheckbox
       prospect={row.id}

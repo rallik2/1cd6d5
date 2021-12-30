@@ -12,6 +12,7 @@ export const useTableStyles = makeStyles((theme) => ({
     "& .MuiCheckbox-root": {
       width: "100%",
       padding: "3px 0",
+      borderRadius: "0"
     }
   },
   tableHead: {
