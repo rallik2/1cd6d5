@@ -6,6 +6,12 @@ class Api::ProspectsFilesController < ApplicationController
         api_resp == "true"
     end
 
+    def show_insert_progress
+        prospects_files_id = params.require(:id)
+        count_and_total = CheckProspectsInsertProgressJob.perform_now prospects_files_id
+        render json: count_and_total
+    end
+
     def insert_prospects
         prospects_files = ProspectsFiles.find(params.require(:id))
 

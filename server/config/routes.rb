@@ -13,6 +13,6 @@ Rails.application.routes.draw do
         post "/prospects", to: "prospects#create"
         post "/prospects_files", to: "prospects_files#create"
         post "/prospects_files/:id/prospects", to: "prospects_files#insert_prospects"
-        get "/api/prospects_files/:id/progress", to: "prospects_files#show_insert_progress"
+        get "/prospects_files/:id/progress", to: "prospects_files#show_insert_progress"
     end
 end
