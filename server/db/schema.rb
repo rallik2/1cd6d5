@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_03_222744) do
+ActiveRecord::Schema.define(version: 2022_01_05_211448) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2022_01_03_222744) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id", null: false
+    t.bigint "csv_id"
     t.index ["user_id"], name: "index_prospects_on_user_id"
   end
 
@@ -72,6 +73,7 @@ ActiveRecord::Schema.define(version: 2022_01_03_222744) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id", null: false
+    t.integer "total"
     t.index ["user_id"], name: "index_prospects_files_on_user_id"
   end
 

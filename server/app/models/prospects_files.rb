@@ -15,4 +15,8 @@ class ProspectsFiles < ApplicationRecord
         errors.add(:base, "Larger than 200MB")
       end
     end
+
+    def file_path
+      ActiveStorage::Blob.service.path_for(file.key)
+    end
   end
