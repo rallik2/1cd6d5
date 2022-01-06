@@ -8,8 +8,8 @@ class Api::ProspectsFilesController < ApplicationController
 
     def show_insert_progress
         prospects_files_id = params.require(:id)
-        count_and_total = CheckProspectsInsertProgressJob.perform_now prospects_files_id
-        render json: count_and_total
+        prospects_inserted_and_csv_size = CheckProspectsInsertProgressJob.perform_now prospects_files_id
+        render json: prospects_inserted_and_csv_size
     end
 
     def insert_prospects
@@ -53,7 +53,7 @@ class Api::ProspectsFilesController < ApplicationController
             end
 
         end
-        render json: { prospects_files: prospects_files}
+        render json: {prospects_files: prospects_files}
     end
 
     def create
