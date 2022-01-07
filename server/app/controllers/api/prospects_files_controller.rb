@@ -1,6 +1,3 @@
-DEFAULT_FORCE = false
-DEFAULT_HAS_HEADERS = true
-
 class Api::ProspectsFilesController < ApplicationController
     def is_true(api_resp)
         api_resp == "true"
@@ -22,12 +19,12 @@ class Api::ProspectsFilesController < ApplicationController
         email_index = params.require(:email_index).to_i
         first_name_index = params.require(:first_name_index).to_i
         last_name_index = params.require(:last_name_index).to_i
-        force = (is_true params[:force] || DEFAULT_FORCE)
-        has_headers = (is_true params[:has_headers] || DEFAULT_HAS_HEADERS)
+        force = is_true params.require(:force)
+        has_headers = is_true params.require(:has_headers)
 
         CSV.foreach(prospects_files.file_path, headers: has_headers) do |row|
 
-            if row[email_index].nil?
+            if row[email_index].nil? or !row[email_index].include?("@")
                 next
             end
 
