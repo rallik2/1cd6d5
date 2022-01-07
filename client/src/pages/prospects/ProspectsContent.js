@@ -14,8 +14,19 @@ const Content = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  selectedProspects,
+  isFullPageSelected,
+  handleChangeSelectedProspects,
+  handleCheckFullPageProspects,
+  TableCheckbox
 }) => {
   const rowData = paginatedData.map((row) => [
+    <TableCheckbox
+      prospect={row.id}
+      isHeader={false}
+      isChecked={selectedProspects.has(row.id)}
+      handleChangeSelectedProspects={handleChangeSelectedProspects}
+    />,
     row.email,
     row.first_name,
     row.last_name,
@@ -31,20 +42,28 @@ const Content = ({
         </Grid>
       ) : (
         <PaginatedTable
-          paginatedData={paginatedData}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-          count={count}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          headerColumns={[
-            "Email",
-            "First Name",
-            "Last Name",
-            "Created",
-            "Updated",
-          ]}
-          rowData={rowData}
+            paginatedData={paginatedData}
+            selectedProspects={selectedProspects}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            count={count}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            headerColumns={[
+              <TableCheckbox
+                prospect={page}
+                isHeader={true}
+                isChecked={isFullPageSelected}
+                handleChangeSelectedProspects={handleCheckFullPageProspects}
+              />,
+              "Email",
+              "First Name",
+              "Last Name",
+              "Created",
+              "Updated",
+            ]}
+            rowData={rowData}
+            renderProspectsCountModal={true}
         />
       )}
     </>
