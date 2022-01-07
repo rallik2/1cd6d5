@@ -5,58 +5,37 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularP
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 
-const ProspectsCountModalWrapper = ({count, selectedProspects, selectedProspectsCount }) => {
+const ProspectsCountAddToCampaignModal = ({count, selectedProspects }) => {
     const { countModalWrapper, selectedCountTracker } = useTableStyles();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [campaignsAreLoading, setCampaignsAreLoading] = useState(false);
     const [campaignsSearchData, setCampaignsSearchData] = useState([])
     const [selectedCampaign, setSelectedCampaign] = useState(null)
-    const [selectedProspectIds, setSelectedProspectIds] = useState([]);
-
-    const getSelectedProspectsIds = () => {
-        const currentSelectedProspects = selectedProspects;
-        const selectedProspectsToAdd = [];
-        const selectedProspectsRawArray = Object.entries(currentSelectedProspects)
-        selectedProspectsRawArray.forEach(([prospect, isSelected]) => {
-            if (isSelected) {
-                selectedProspectsToAdd.push(parseInt(prospect))
-            };
-        })
-        setSelectedProspectIds(selectedProspectsToAdd);
-    };
+    const modalButtonDisabled = selectedProspects.size < 1;
+    const confirmButtonDisabled = selectedCampaign === null;
  
     const handleDialogOpen = () => {
-        getSelectedProspectsIds()
-        setDialogOpen(true)
+        setDialogOpen(true);
     }
     const handleDialogClose = () => {
-        setCampaignsSearchData([])
-        setSelectedCampaign(null)
-        setDialogOpen(false)
+        setCampaignsSearchData([]);
+        setSelectedCampaign(null);
+        setDialogOpen(false);
     }
     const handleConfirmAddToCampaign = async () => {
-        if (selectedProspectIds.length < 1) {
-            alert("Please select prospects before adding to a campaign");
-            handleDialogClose();
-            return;
-        }
-        if (!selectedCampaign) {
-            alert("Please select a campaign");
-            return;
-        }
-        const prospect_ids = selectedProspectIds;
-        const count_prospects_to_add = prospect_ids.length;
+        const selectedProspectsArray = [...selectedProspects];
+        const countProspectsToAdd = selectedProspectsArray.length;
         const { id } = selectedCampaign;
-        if (prospect_ids && prospect_ids.length > 0 && id !== null) {
+        if (selectedProspectsArray && selectedProspectsArray.length > 0 && id !== null) {
             try {
                 const resp = await axios.post(
                     `/api/campaigns/${id}/prospects`,
-                    { id, prospect_ids }
+                    { id, prospect_ids: selectedProspectsArray }
                 );
-                const count_prospects_added = resp.data.prospect_ids.length;
-                if (count_prospects_added < count_prospects_to_add) {
-                    const difference_added = count_prospects_to_add - count_prospects_added;
-                    alert(`${difference_added} of ${count_prospects_to_add} prospects already in campaign`)
+                const countProspectsAdded = resp.data.prospect_ids.length;
+                if (countProspectsAdded < countProspectsToAdd) {
+                    const differenceAdded = countProspectsToAdd - countProspectsAdded;
+                    alert(`${differenceAdded} of ${countProspectsToAdd} prospects already in campaign`);
                 }
             } catch (error) {
                 console.error(error);
@@ -86,14 +65,14 @@ const ProspectsCountModalWrapper = ({count, selectedProspects, selectedProspects
     return (
         <div className={countModalWrapper}>
             <div className={selectedCountTracker}>
-                {`${selectedProspectsCount} of ${count} selected`}
+                {`${selectedProspects.size} of ${count} selected`}
             </div>
-            <Button size="small" variant="outlined" color="primary" onClick={handleDialogOpen}>
+            <Button size="small" variant="outlined" color="primary" disabled={modalButtonDisabled} onClick={handleDialogOpen}>
                 Add to Campaign
             </Button>
             <Dialog open={dialogOpen} onClose={handleDialogClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">
-                    {`Select a Campaign to Add ${selectedProspectsCount} Prospects`}
+                    {`Select a Campaign to Add ${selectedProspects.size} Prospects`}
                 </DialogTitle>
                 <DialogContent>
                     <Autocomplete
@@ -107,7 +86,7 @@ const ProspectsCountModalWrapper = ({count, selectedProspects, selectedProspects
                                 handleSearchCampaigns(newInput);
                             }
                         }}
-                        onChange={(event, newValue) => {
+                        onChange={(_, newValue) => {
                             setSelectedCampaign(newValue)
                         }}
                         renderInput={(params) => (
@@ -130,13 +109,13 @@ const ProspectsCountModalWrapper = ({count, selectedProspects, selectedProspects
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button size="large" color="primary" onClick={handleConfirmAddToCampaign}>
+                    <Button size="large" color="primary" disabled={confirmButtonDisabled} onClick={handleConfirmAddToCampaign} >
                         Confirm
                     </Button>
                 </DialogActions>
             </Dialog>
         </div>
-    )
+    );
 }
 
-export default ProspectsCountModalWrapper;
+export default ProspectsCountAddToCampaignModal;

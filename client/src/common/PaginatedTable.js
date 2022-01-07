@@ -13,7 +13,7 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 
 import { Grid, TableCell, Typography } from "@material-ui/core";
-import ProspectsCountModalWrapper from "../pages/prospects/ProspectsCountModalWrapper";
+import ProspectsCountAddToCampaignModal from "../pages/prospects/ProspectsCountAddToCampaignModal";
 import { NUM_ROWS_PER_PAGE_CHOICES } from "../constants/table";
 import { useTableStyles } from "../styles/table";
 
@@ -85,7 +85,6 @@ export default function CustomPaginatedTable({
   handleChangePage,
   handleChangeRowsPerPage,
   selectedProspects,
-  selectedProspectsCount,
   renderProspectsCountModal
 }) {
   const { tableContainer, tableHead, flexRoot, flexRootEnd } = useTableStyles();
@@ -114,10 +113,9 @@ export default function CustomPaginatedTable({
     <React.Fragment>
       <div className={renderProspectsCountModal ? flexRoot : flexRootEnd}>
         { renderProspectsCountModal ?
-          <ProspectsCountModalWrapper
-          count={count}
-          selectedProspects={selectedProspects}
-          selectedProspectsCount={selectedProspectsCount}
+          <ProspectsCountAddToCampaignModal
+            count={count}
+            selectedProspects={selectedProspects}
           /> :
           <></>
         }

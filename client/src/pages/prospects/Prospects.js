@@ -12,9 +12,8 @@ const Prospects = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_NUM_ROWS_PER_PAGE);
   const [count, setCount] = useState(0);
-  const [isFullPageSelected, setIsFullPageSelected] = useState(null)
-  const [selectedProspects, setSelectedProspects] = useState({});
-  const [selectedProspectsCount, setSelectedProspectsCount] = useState(0);
+  const [isFullPageSelected, setIsFullPageSelected] = useState(false)
+  const [selectedProspects, setSelectedProspects] = useState(() => new Set());
 
   const handleChangeRowsPerPage = (event, _) => {
     setRowsPerPage(event.target.value);
@@ -26,43 +25,37 @@ const Prospects = () => {
   };
 
   const handleChangeSelectedProspects = (event) => {
-    setSelectedProspects((currentlySelected) => ({
-      ...currentlySelected,
-      [event.target.value]: event.target.checked
-    }))
-    const countChangeSingle = event.target.checked ? 1 : -1;
+    const isChecked = event.target.checked;
+    const prospectToUpdate = parseInt(event.target.value)
+    if (isChecked) {
+      setSelectedProspects((selectedProspects) => {
+        return new Set(selectedProspects).add(prospectToUpdate);
+      })
+    } else {
+      setSelectedProspects((selectedProspects) => {
+        const updatedSelectedProspects = new Set(selectedProspects);
+        updatedSelectedProspects.delete(prospectToUpdate)
+        return updatedSelectedProspects;
+      })
+    }
 
-    setSelectedProspectsCount((currentCount) => currentCount += countChangeSingle)
   };
 
   const handleCheckFullPageProspects = (event) => {
     const isChecked = event.target.checked;
-    const currentPageProspects = prospectsData;
-    const currentSelectedProspects = selectedProspects;
-    let count = 0;
-    const updatedProspectStateForPage = currentPageProspects.reduce((fullPagePros, pros) => {
-      if (fullPagePros.data[pros.id] !== isChecked) {
-        fullPagePros.data[pros.id] = isChecked;
-        fullPagePros.count += 1;
-      }
-      return fullPagePros;
-    }, { data: { ...currentSelectedProspects }, count })
-    setIsFullPageSelected((currentlySelected) => !currentlySelected)
-    setSelectedProspects(updatedProspectStateForPage.data)
-    const countChangeFullPage = isChecked ? updatedProspectStateForPage.count : -updatedProspectStateForPage.count;
-    setSelectedProspectsCount((currentCount) => currentCount += countChangeFullPage);
+    setIsFullPageSelected(isChecked)
+    if (isChecked) {
+      const fullPageCheck = new Set(selectedProspects);
+      prospectsData.forEach((prospect) => fullPageCheck.add(prospect.id))
+      setSelectedProspects(fullPageCheck)
+    } else {
+      const fullPageUncheck = new Set(selectedProspects);
+      prospectsData.forEach((prospect) => fullPageUncheck.delete(prospect.id))
+      setSelectedProspects(fullPageUncheck)
+    }
   }
 
   useEffect(() => {
-    const initializeSelectedProsepectsState = (prospectsDataNewPage, currentProspectsData) => {
-      return prospectsDataNewPage.reduce((selProsObj, pros) => {
-        if (!selProsObj[pros.id]) {
-          selProsObj[pros.id] = false;
-        }
-        return selProsObj;
-      }, { ...currentProspectsData } );
-    }
-    
     const fetchProspects = async () => {
       setIsDataLoading(true);
 
@@ -73,9 +66,6 @@ const Prospects = () => {
         if (resp.data.error) throw new Error(resp.data.error);
         setProspectsData(resp.data.prospects);
         setCount(resp.data.total);
-        setSelectedProspects((selected) =>
-          initializeSelectedProsepectsState(resp.data.prospects, selected)
-        )
         setIsFullPageSelected(false)
       } catch (error) {
         console.error(error);
@@ -99,7 +89,6 @@ const Prospects = () => {
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             selectedProspects={selectedProspects}
-            selectedProspectsCount={selectedProspectsCount}
             isFullPageSelected={isFullPageSelected}
             handleChangeSelectedProspects={handleChangeSelectedProspects}
             handleCheckFullPageProspects={handleCheckFullPageProspects}

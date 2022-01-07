@@ -1,8 +1,8 @@
-import React, { memo } from 'react'
+import React, { memo } from 'react';
 import { Checkbox, withStyles } from "@material-ui/core";
 
 
-function TableCheckbox({ prospect, isChecked, handleChangeSelectedProspects }) {
+function TableCheckbox({ prospect, isChecked, isHeader, handleChangeSelectedProspects }) {
 
     const HeaderCheckbox = withStyles((theme) => ({
         root: {
@@ -14,11 +14,24 @@ function TableCheckbox({ prospect, isChecked, handleChangeSelectedProspects }) {
         checked: {},
     }))((props) => <Checkbox {...props} />);
     
-    if (prospect === "header") {
-        return <HeaderCheckbox value={prospect} disableRipple checked={isChecked} onChange={handleChangeSelectedProspects}/>
+    if (isHeader) {
+        return (
+            <HeaderCheckbox
+                value={prospect}
+                disableRipple
+                checked={isChecked}
+                onChange={handleChangeSelectedProspects}
+            />
+        );
     } else {
         return (
-            <Checkbox value={prospect} disableRipple color="primary" checked={isChecked} onChange={handleChangeSelectedProspects}/>
+            <Checkbox
+                value={prospect}
+                disableRipple
+                color="primary"
+                checked={isChecked}
+                onChange={handleChangeSelectedProspects}
+            />
         )
     }
 }
