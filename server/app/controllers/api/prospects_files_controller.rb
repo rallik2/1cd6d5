@@ -12,9 +12,10 @@ class Api::ProspectsFilesController < ApplicationController
             return render status: 403, json: {message: "This file does not belong to this user."}
         else
 
-        total = CSV.foreach(prospects_files.file_path).count
-        prospects_inserted_count = Prospect.where(prospects_files_id: prospects_files.id).count
-        render json: {total: total, done: prospects_inserted_count}
+            total = CSV.foreach(prospects_files.file_path).count
+            prospects_inserted_count = Prospect.where(prospects_files_id: prospects_files.id).count
+            render json: {total: total, done: prospects_inserted_count}
+        end
     end
 
     def insert_prospects
@@ -68,11 +69,13 @@ class Api::ProspectsFilesController < ApplicationController
             preview = CSV.foreach(file_upload).take(5)
             render json: {id: new_prospects_files.id, preview: preview}
         else
+
             if new_prospects_files.errors.full_messages.include?("Must be a CSV")
                 error_status = 415
             else
                 error_status = 413
             end
+
             render status: error_status, json: {message: new_prospects_files.errors.full_messages}
         end
 
