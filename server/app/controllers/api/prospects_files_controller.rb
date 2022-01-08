@@ -66,7 +66,12 @@ class Api::ProspectsFilesController < ApplicationController
             preview = CSV.foreach(file_upload).take(5)
             render json: {id: new_prospects_files.id, preview: preview}
         else
-            render json: {error: new_prospects_files.errors.full_messages}
+            if new_prospects_files.errors.full_messages.include?("Must be a CSV")
+                error_status = 415
+            else
+                error_status = 413
+            end
+            render status: error_status, json: {message: new_prospects_files.errors.full_messages}
         end
 
     end
