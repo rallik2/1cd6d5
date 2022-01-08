@@ -1,5 +1,6 @@
 class ProspectsFiles < ApplicationRecord
     belongs_to :user
+    has_many :prospects
     has_one_attached :file
     validate :file_type_and_size
 

@@ -4,69 +4,66 @@ class Api::ProspectsFilesController < ApplicationController
     end
 
     def show_insert_progress
-        prospects_files_id = params.require(:id)
-        prospects_inserted_and_csv_size = CheckProspectsInsertProgressJob.perform_now prospects_files_id
-        render json: prospects_inserted_and_csv_size
-    end
-
-    def insert_prospects
         prospects_files = ProspectsFiles.find(params.require(:id))
 
         if prospects_files.user_id != @user.id
             return render status: 403, json: {message: "This file does not belong to this user."}
         end
 
-        email_index = params.require(:email_index).to_i
-        first_name_index = params.require(:first_name_index).to_i
-        last_name_index = params.require(:last_name_index).to_i
-        force = is_true params.require(:force)
-        has_headers = is_true params.require(:has_headers)
+        total = CSV.foreach(prospects_files.file_path).count
+        prospects_inserted_count = Prospect.where(prospects_files_id: prospects_files.id).count
+        render json: {total: total, done: prospects_inserted_count}
+    end
 
-        CSV.foreach(prospects_files.file_path, headers: has_headers) do |row|
+    def insert_prospects
+        prospects_files = ProspectsFiles.find(params.require(:id))
 
-            if row[email_index].nil? or !row[email_index].include?("@")
-                next
-            end
+        if !prospects_files
+            return render status: 404, json: {message: "ProspectsFiles with this ID not found."}
+        elsif prospects_files.user_id != @user.id
+            return render status: 403, json: {message: "This file does not belong to this user."}
+        else
+        
+            email_index_check = params.require(:email_index)
+            first_name_index_check = params.require(:first_name_index)
+            last_name_index_check = params.require(:last_name_index)
+            force_check = params.require(:force)
+            has_headers_check = params.require(:has_headers)
 
-            prospect_in_db = Prospect.find_by(email: row[email_index])
+            prospects_files_params = [email_index_check, first_name_index_check, last_name_index_check, force_check, has_headers_check]
+            valid_parameter_inputs = ["0", "1", "2", "true", "false"]
 
-            if !prospect_in_db
-                Prospect.create({
-                    email: row[email_index],
-                    first_name: row[first_name_index],
-                    last_name: row[last_name_index],
-                    user_id: @user.id,
-                    csv_id: prospects_files.id,
-                })
-            elsif force
-                prospect_in_db.update({
-                    first_name: row[first_name_index],
-                    last_name: row[last_name_index],
-                    user_id: @user.id,
-                    csv_id: prospects_files.id,
-                })
-            else
-                next
-            end
+            if ((prospects_files_params - valid_parameter_inputs).any? or
+                 email_index_check == first_name_index_check or
+                 email_index_check == last_name_index_check or
+                 first_name_index_check == last_name_index_check)
+                return render status: 400, json: {message: "Index parameters are not valid."}
+            end    
+            
+            email_index = email_index_check.to_i
+            first_name_index = first_name_index_check.to_i
+            last_name_index = last_name_index_check.to_i
+            force = is_true(force_check)
+            has_headers = is_true(has_headers_check)
 
+            InsertProspectsFromCsvJob.perform_later(@user.id, prospects_files.id, email_index, first_name_index, last_name_index, force, has_headers)
+
+            render json: {prospects_files: prospects_files}
         end
-        render json: {prospects_files: prospects_files}
     end
 
     def create
         file_upload = params.require(:file)
-        new_prospects_files = ProspectsFiles.new({
+        new_prospects_files = ProspectsFiles.create({
             user_id: @user.id,
+            file: {
+                io: file_upload,
+                filename: file_upload.original_filename,
+            },
         })
-        new_prospects_files.file.attach(file_upload)
 
         if new_prospects_files.valid?
-            file_upload_csv = CSV.read(file_upload, headers: false)
-            total = file_upload_csv.length
-            preview = file_upload_csv.take(5)
-            new_prospects_files.total = total
-            new_prospects_files.save
-
+            preview = CSV.foreach(file_upload).take(5)
             render json: {id: new_prospects_files.id, preview: preview}
         else
             render json: {error: new_prospects_files.errors.full_messages}
