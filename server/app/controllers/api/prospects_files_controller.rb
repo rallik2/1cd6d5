@@ -6,9 +6,11 @@ class Api::ProspectsFilesController < ApplicationController
     def show_insert_progress
         prospects_files = ProspectsFiles.find(params.require(:id))
 
-        if prospects_files.user_id != @user.id
+        if !prospects_files
+            return render status: 404, json: {message: "ProspectsFiles with this ID not found."}
+        elsif prospects_files.user_id != @user.id
             return render status: 403, json: {message: "This file does not belong to this user."}
-        end
+        else
 
         total = CSV.foreach(prospects_files.file_path).count
         prospects_inserted_count = Prospect.where(prospects_files_id: prospects_files.id).count
