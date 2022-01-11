@@ -11,5 +11,8 @@ Rails.application.routes.draw do
         post "/campaigns/:id/prospects", to: "campaigns#add_prospects"
         get "/prospects", to: "prospects#show"
         post "/prospects", to: "prospects#create"
+        post "/prospects_files", to: "prospects_files#create"
+        post "/prospects_files/:id/prospects", to: "prospects_files#insert_prospects"
+        get "/prospects_files/:id/progress", to: "prospects_files#show_insert_progress"
     end
 end
