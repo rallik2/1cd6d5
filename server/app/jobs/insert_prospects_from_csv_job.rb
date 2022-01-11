@@ -26,7 +26,7 @@ class InsertProspectsFromCsvJob < ApplicationJob
           last_name: row[last_name_index],
           user_id: user_id,
           prospects_files_id: prospects_files.id,
-      }, unique_by: %i[ email user_id ])
+        })
       end
 
     end
